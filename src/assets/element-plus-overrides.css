@@ -1,0 +1,149 @@
+/* Element Plus Theme Overrides */
+
+:root {
+  --el-border-radius-base: 12px;
+  --el-border-radius-small: 10px;
+  --el-border-radius-round: 999px;
+
+  --el-font-size-base: 14px;
+  --el-text-color-primary: #1f2329;
+  --el-text-color-regular: #4e5969;
+  --el-text-color-secondary: #86909c;
+
+  --el-bg-color: #ffffff;
+  --el-bg-color-page: #ffffff;
+  --el-fill-color-blank: #ffffff;
+  --el-fill-color-light: #f7f8fa;
+
+  --el-border-color: #e5e6eb;
+  --el-border-color-light: #e5e6eb;
+
+  --el-color-primary: #1677ff;
+  --el-color-primary-light-3: #5a9bff;
+  --el-color-primary-light-5: #85b8ff;
+  --el-color-primary-light-7: #b0d2ff;
+  --el-color-primary-light-9: #e8f1ff;
+}
+
+body {
+  background: #ffffff;
+}
+
+/* Layout container width like screenshot */
+.container {
+  max-width: 1200px;
+}
+
+/* Header: lighter, cleaner */
+.header {
+  box-shadow: none;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Input: pill + subtle background */
+.search-wrapper .el-input__wrapper {
+  border-radius: 999px;
+  background: #f7f8fa;
+  box-shadow: none;
+  border: 1px solid #e5e6eb;
+}
+
+.search-wrapper .el-input__wrapper.is-focus {
+  background: #ffffff;
+  border-color: #c9cdd4;
+  box-shadow: 0 0 0 4px rgba(22, 119, 255, 0.08);
+}
+
+/* Buttons: pill */
+.header-actions .el-button {
+  border-radius: 999px;
+  padding: 8px 14px;
+}
+
+/* FilterBar: pill radio buttons */
+.filter-tags .el-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.filter-tags .el-radio-button__inner {
+  border-radius: 999px !important;
+  border: 1px solid #e5e6eb;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.filter-tags .el-radio-button__original-radio:checked + .el-radio-button__inner {
+  background: #f2f3f5;
+  border-color: #c9cdd4;
+  color: #1f2329;
+}
+
+/* Card: subtle shadow + bigger radius */
+.el-card {
+  border-radius: 14px;
+  border: 1px solid #f0f0f0;
+}
+
+.el-card.is-hover-shadow:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.el-card__body {
+  padding: 14px;
+}
+
+/* Card title style closer to screenshot */
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2329;
+  line-height: 1.4;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Image inside card */
+.el-image {
+  border-radius: 12px;
+}
+
+/* Dialog: round + lighter header */
+.el-dialog {
+  border-radius: 14px;
+}
+
+.el-dialog__header {
+  margin-right: 0;
+  padding: 18px 18px 0 18px;
+}
+
+.el-dialog__body {
+  padding: 16px 18px 18px 18px;
+}
+
+.el-dialog__footer {
+  padding: 0 18px 18px 18px;
+}
+
+/* Upload picture-card: softer */
+.el-upload--picture-card {
+  border-radius: 12px;
+  border-color: #e5e6eb;
+  background: #f7f8fa;
+}
+
+.el-upload-list--picture-card .el-upload-list__item {
+  border-radius: 12px;
+}
+
+/* ElTable in HistoryDialog: compact + clean */
+.el-table {
+  --el-table-border-color: #f0f0f0;
+  --el-table-header-bg-color: #fafafa;
+}

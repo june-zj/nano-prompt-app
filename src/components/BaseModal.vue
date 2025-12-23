@@ -1,9 +1,24 @@
 <template>
-  <div class="modal-overlay" v-if="modelValue" @click.self="handleOverlayClick">
-    <div class="modal" :class="modalClass">
-      <slot />
-    </div>
-  </div>
+  <el-dialog
+    :model-value="modelValue"
+    @update:modelValue="$emit('update:modelValue', $event)"
+    @closed="$emit('close')"
+    :title="title"
+    :width="width"
+    :close-on-click-modal="closeOnOverlay"
+    :append-to-body="appendToBody"
+    :class="modalClass"
+  >
+    <template v-if="$slots.header" #header>
+      <slot name="header" />
+    </template>
+
+    <slot />
+
+    <template v-if="$slots.footer" #footer>
+      <slot name="footer" />
+    </template>
+  </el-dialog>
 </template>
 
 <script>
@@ -14,6 +29,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    title: {
+      type: String,
+      default: "",
+    },
+    width: {
+      type: [String, Number],
+      default: "800px",
+    },
     modalClass: {
       type: [String, Array, Object],
       default: "",
@@ -22,17 +45,11 @@ export default {
       type: Boolean,
       default: true,
     },
+    appendToBody: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ["update:modelValue", "close"],
-  methods: {
-    close() {
-      this.$emit("update:modelValue", false);
-      this.$emit("close");
-    },
-    handleOverlayClick() {
-      if (!this.closeOnOverlay) return;
-      this.close();
-    },
-  },
 };
 </script>
