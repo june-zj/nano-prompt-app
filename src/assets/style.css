@@ -620,19 +620,13 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
-  background: #f8f8f8;
   border-radius: 12px;
   transition: all 0.2s;
 }
 
-.history-item:hover {
-  background: #f0f0f0;
-}
-
 .history-item img {
-  width: 80px;
-  height: 80px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
@@ -969,7 +963,7 @@ body {
   }
   
   .card-title {
-    font-size: 14px;
+    font-size: 16px;
   }
   
   .card-meta {

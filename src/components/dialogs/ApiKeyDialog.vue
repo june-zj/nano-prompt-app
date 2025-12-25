@@ -1,10 +1,11 @@
 <template>
-  <BaseModal
+  <el-dialog
     :model-value="modelValue"
     @update:modelValue="$emit('update:modelValue', $event)"
     title="设置 API Key"
     width="400px"
-    modal-class="api-key-modal"
+    class="api-key-modal"
+    append-to-body
   >
     <div class="api-key-register">
       <p>还没有 API Key？</p>
@@ -34,27 +35,22 @@
       <el-button @click="$emit('update:modelValue', false)">取消</el-button>
       <el-button type="primary" @click="$emit('save')">保存</el-button>
     </template>
-  </BaseModal>
+  </el-dialog>
 </template>
 
-<script>
-import BaseModal from "../BaseModal.vue";
+<script setup>
+defineOptions({ name: "ApiKeyDialog" });
 
-export default {
-  name: "ApiKeyDialog",
-  components: {
-    BaseModal,
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    apiKeyInput: {
-      type: String,
-      default: "",
-    },
+  apiKeyInput: {
+    type: String,
+    default: "",
   },
-  emits: ["update:modelValue", "update:apiKeyInput", "save"],
-};
+});
+
+defineEmits(["update:modelValue", "update:apiKeyInput", "save"]);
 </script>

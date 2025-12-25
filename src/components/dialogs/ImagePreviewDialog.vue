@@ -1,38 +1,38 @@
 <template>
-  <BaseModal
+  <el-dialog
     :model-value="modelValue"
     @update:modelValue="$emit('update:modelValue', $event)"
     title="图片预览"
-    width="90vw"
-    modal-class="preview-modal"
+    class="preview-modal"
+    append-to-body
   >
-    <el-image
-      :src="image"
-      alt="预览图片"
-      fit="contain"
-      style="width: 100%; max-height: 80vh"
-    />
-  </BaseModal>
+    <el-image :src="image" alt="预览图片" fit="contain" class="preview-image" />
+  </el-dialog>
 </template>
 
-<script>
-import BaseModal from "../BaseModal.vue";
+<script setup>
+defineOptions({ name: "ImagePreviewDialog" });
 
-export default {
-  name: "ImagePreviewDialog",
-  components: {
-    BaseModal,
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    image: {
-      type: String,
-      default: "",
-    },
+  image: {
+    type: String,
+    default: "",
   },
-  emits: ["update:modelValue"],
-};
+});
+
+defineEmits(["update:modelValue"]);
 </script>
+
+<style scoped>
+.preview-image {
+  text-align: center;
+}
+
+.preview-image :deep(.el-image__inner) {
+  max-height: 600px;
+}
+</style>

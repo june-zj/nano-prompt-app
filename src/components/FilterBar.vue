@@ -20,19 +20,19 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: "FilterBar",
-  props: {
-    modelValue: {
-      type: String,
-      default: "all",
-    },
-    categories: {
-      type: Array,
-      default: () => [],
-    },
+<script setup>
+defineOptions({ name: "FilterBar" });
+
+defineProps({
+  modelValue: {
+    type: String,
+    default: "all",
   },
-  emits: ["update:modelValue"],
-};
+  categories: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+defineEmits(["update:modelValue"]);
 </script>

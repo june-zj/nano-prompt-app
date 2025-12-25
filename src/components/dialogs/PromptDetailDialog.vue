@@ -1,10 +1,11 @@
 <template>
-  <BaseModal
+  <el-dialog
     :model-value="modelValue"
     @update:modelValue="$emit('update:modelValue', $event)"
     :title="prompt?.title || ''"
     width="800px"
-    @close="$emit('close')"
+    @closed="$emit('close')"
+    append-to-body
   >
     <el-image
       :src="prompt?.image"
@@ -34,27 +35,22 @@
         >做同款</el-button
       >
     </template>
-  </BaseModal>
+  </el-dialog>
 </template>
 
-<script>
-import BaseModal from "../BaseModal.vue";
+<script setup>
+defineOptions({ name: "PromptDetailDialog" });
 
-export default {
-  name: "PromptDetailDialog",
-  components: {
-    BaseModal,
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    prompt: {
-      type: Object,
-      default: null,
-    },
+  prompt: {
+    type: Object,
+    default: null,
   },
-  emits: ["update:modelValue", "close", "copy", "start-generation"],
-};
+});
+
+defineEmits(["update:modelValue", "close", "copy", "start-generation"]);
 </script>

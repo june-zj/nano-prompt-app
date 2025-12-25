@@ -2,13 +2,8 @@
   <AppMain />
 </template>
 
-<script>
+<script setup>
 import AppMain from "./components/AppMain.vue";
 
-export default {
-  name: "App",
-  components: {
-    AppMain,
-  },
-};
+defineOptions({ name: "App" });
 </script>

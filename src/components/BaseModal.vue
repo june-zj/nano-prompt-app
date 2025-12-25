@@ -21,35 +21,35 @@
   </el-dialog>
 </template>
 
-<script>
-export default {
-  name: "BaseModal",
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    title: {
-      type: String,
-      default: "",
-    },
-    width: {
-      type: [String, Number],
-      default: "800px",
-    },
-    modalClass: {
-      type: [String, Array, Object],
-      default: "",
-    },
-    closeOnOverlay: {
-      type: Boolean,
-      default: true,
-    },
-    appendToBody: {
-      type: Boolean,
-      default: true,
-    },
+<script setup>
+defineOptions({ name: "BaseModal" });
+
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  emits: ["update:modelValue", "close"],
-};
+  title: {
+    type: String,
+    default: "",
+  },
+  width: {
+    type: [String, Number],
+    default: "800px",
+  },
+  modalClass: {
+    type: [String, Array, Object],
+    default: "",
+  },
+  closeOnOverlay: {
+    type: Boolean,
+    default: true,
+  },
+  appendToBody: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+defineEmits(["update:modelValue", "close"]);
 </script>
