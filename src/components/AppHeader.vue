@@ -11,7 +11,9 @@
           clearable
           @update:modelValue="$emit('update:searchQuery', $event)"
         >
-          <template #prefix>🔍</template>
+          <template #prefix>
+            <el-icon><Search /></el-icon>
+          </template>
         </el-input>
       </div>
 
@@ -36,6 +38,8 @@
 </template>
 
 <script setup>
+import { Search } from "@element-plus/icons-vue";
+
 defineOptions({ name: "AppHeader" });
 
 defineProps({

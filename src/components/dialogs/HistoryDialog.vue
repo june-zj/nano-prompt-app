@@ -12,12 +12,7 @@
         class="history-item"
         @click="$emit('preview', item)"
       >
-        <el-image
-          :src="item.image"
-          fit="cover"
-          loading="lazy"
-          class="history-thumb"
-        />
+        <el-image :src="item.image" class="history-thumb" />
 
         <div class="history-actions" @click.stop>
           <el-button
@@ -81,16 +76,50 @@ defineProps({
 
 defineEmits(["update:modelValue", "preview", "delete", "clear"]);
 
-function downloadItem(item) {
+function dataUrlToBlob(dataUrl) {
+  const [meta, base64] = dataUrl.split(",");
+  const mime =
+    meta.match(/data:(.*?);base64/)?.[1] || "application/octet-stream";
+  const binary = atob(base64);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i += 1) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+async function downloadItem(item) {
   const url = item?.image;
   if (!url) return;
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `nano-banana-${item?.timestamp || Date.now()}.png`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  const filename = `nano-banana-${item?.timestamp || Date.now()}.png`;
+
+  try {
+    let blob;
+
+    if (url.startsWith("data:")) {
+      blob = dataUrlToBlob(url);
+    } else {
+      const res = await fetch(url, { mode: "cors" });
+      if (!res.ok) throw new Error(`fetch failed: ${res.status}`);
+      blob = await res.blob();
+    }
+
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
+  } catch (e) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }
 </script>
 
@@ -98,7 +127,6 @@ function downloadItem(item) {
 .history-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(3, 1fr);
   gap: 12px;
   overflow: auto;
   padding: 2px;
@@ -111,8 +139,17 @@ function downloadItem(item) {
 
 .history-thumb {
   width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
   border-radius: 10px;
   overflow: hidden;
+}
+
+.history-thumb :deep(img),
+.history-thumb :deep(.el-image__inner) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .history-actions {

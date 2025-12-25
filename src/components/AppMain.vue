@@ -13,24 +13,6 @@
     </el-header>
 
     <el-main style="padding: 0; height: calc(100vh - 32px)">
-      <GenerationPanel
-        :show="!!selectedPrompt && !showDetailModal"
-        :selected-prompt="selectedPrompt"
-        :editable-prompt="editablePrompt"
-        :file-list="uploadFileList"
-        :is-generating="isGenerating"
-        :generated-image="generatedImage"
-        :error-message="errorMessage"
-        :has-api-key="hasApiKey"
-        @close="clearSelectedPrompt"
-        @update:editablePrompt="editablePrompt = $event"
-        @update:fileList="uploadFileList = $event"
-        @images-change="uploadedImages = $event"
-        @generate="generateImage"
-        @download="downloadImage"
-        @preview="previewImage = $event"
-      />
-
       <FilterBar v-model="activeCategory" :categories="categories" />
 
       <PromptGrid :prompts="filteredPrompts" @select="openPromptDetail" />
@@ -75,6 +57,24 @@
         }
       "
     />
+
+    <GenerationDialog
+      :show="!!selectedPrompt && !showDetailModal"
+      :selected-prompt="selectedPrompt"
+      :editable-prompt="editablePrompt"
+      :file-list="uploadFileList"
+      :is-generating="isGenerating"
+      :generated-image="generatedImage"
+      :error-message="errorMessage"
+      :has-api-key="hasApiKey"
+      @close="clearSelectedPrompt"
+      @update:editablePrompt="editablePrompt = $event"
+      @update:fileList="uploadFileList = $event"
+      @images-change="uploadedImages = $event"
+      @generate="generateImage"
+      @download="downloadImage"
+      @preview="previewImage = $event"
+    />
   </el-container>
 </template>
 
@@ -88,7 +88,7 @@ import customerServiceQR from "../assets/qrcode/customer-service.png";
 import AppHeader from "./AppHeader.vue";
 import FilterBar from "./FilterBar.vue";
 import PromptGrid from "./PromptGrid.vue";
-import GenerationPanel from "./GenerationPanel.vue";
+import GenerationDialog from "./dialogs/GenerationDialog.vue";
 import AppFooter from "./AppFooter.vue";
 import ApiKeyDialog from "./dialogs/ApiKeyDialog.vue";
 import PromptDetailDialog from "./dialogs/PromptDetailDialog.vue";
