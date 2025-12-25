@@ -78,11 +78,13 @@
   </el-container>
 </template>
 
-<script>
+<script setup>
+import { computed, nextTick, onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { categories, prompts } from "../data/prompts.js";
 import developerGroupQR from "../assets/qrcode/developer-group.png";
 import customerServiceQR from "../assets/qrcode/customer-service.png";
+
 import AppHeader from "./AppHeader.vue";
 import FilterBar from "./FilterBar.vue";
 import PromptGrid from "./PromptGrid.vue";
@@ -93,273 +95,270 @@ import PromptDetailDialog from "./dialogs/PromptDetailDialog.vue";
 import HistoryDialog from "./dialogs/HistoryDialog.vue";
 import ImagePreviewDialog from "./dialogs/ImagePreviewDialog.vue";
 
-export default {
-  name: "AppMain",
-  components: {
-    AppHeader,
-    FilterBar,
-    PromptGrid,
-    GenerationPanel,
-    AppFooter,
-    ApiKeyDialog,
-    PromptDetailDialog,
-    HistoryDialog,
-    ImagePreviewDialog,
-  },
-  data() {
-    return {
-      categories,
-      prompts,
-      searchQuery: "",
-      activeCategory: "all",
-      apiKey: "",
-      apiKeyInput: "",
-      showApiKeyModal: false,
-      showDetailModal: false,
-      showHistoryModal: false,
-      selectedPrompt: null,
-      editablePrompt: "",
-      uploadedImages: [],
-      uploadFileList: [],
-      isGenerating: false,
-      generatedImage: "",
-      errorMessage: "",
-      imageHistory: [],
-      previewImage: null,
-      developerGroupQR,
-      customerServiceQR,
-    };
-  },
-  computed: {
-    hasApiKey() {
-      return !!this.apiKey;
-    },
-    filteredPrompts() {
-      let result = this.prompts;
+defineOptions({ name: "AppMain" });
 
-      if (this.activeCategory !== "all") {
-        result = result.filter((p) => p.category === this.activeCategory);
-      }
+const searchQuery = ref("");
+const activeCategory = ref("all");
+const apiKey = ref("");
+const apiKeyInput = ref("");
 
-      if (this.searchQuery.trim()) {
-        const query = this.searchQuery.toLowerCase();
-        result = result.filter(
-          (p) =>
-            p.title.toLowerCase().includes(query) ||
-            p.prompt.toLowerCase().includes(query) ||
-            p.prompt.includes(query) ||
-            p.categoryLabel.includes(query)
-        );
-      }
+const showApiKeyModal = ref(false);
+const showDetailModal = ref(false);
+const showHistoryModal = ref(false);
 
-      return result;
-    },
-  },
-  mounted() {
-    const savedKey = localStorage.getItem("nano-banana-api-key");
-    if (savedKey) {
-      this.apiKey = savedKey;
-    }
-    this.loadImageHistory();
-  },
-  methods: {
-    saveApiKey() {
-      if (this.apiKeyInput.trim()) {
-        this.apiKey = this.apiKeyInput.trim();
-        localStorage.setItem("nano-banana-api-key", this.apiKey);
-        this.showToast("API Key 已保存");
-      }
-      this.showApiKeyModal = false;
-    },
-    openPromptDetail(prompt) {
-      this.selectedPrompt = prompt;
-      this.showDetailModal = true;
-    },
-    closeDetailModal() {
-      this.showDetailModal = false;
-    },
-    clearSelectedPrompt() {
-      this.selectedPrompt = null;
-      this.editablePrompt = "";
-      this.uploadedImages = [];
-      this.uploadFileList = [];
-      this.generatedImage = "";
-      this.errorMessage = "";
-    },
-    copyPrompt() {
-      if (this.selectedPrompt) {
-        navigator.clipboard
-          .writeText(this.selectedPrompt.prompt)
-          .then(() => this.showToast("提示词已复制到剪贴板"))
-          .catch(() => this.showToast("复制失败，请手动复制"));
-      }
-    },
-    startGeneration() {
-      if (!this.hasApiKey) {
-        this.showToast("请先设置 API Key");
-        this.showApiKeyModal = true;
-        return;
-      }
-      this.editablePrompt = this.selectedPrompt?.prompt || "";
-      this.uploadedImages = [];
-      this.uploadFileList = [];
-      this.generatedImage = "";
-      this.errorMessage = "";
-      this.showDetailModal = false;
-      this.$nextTick(() => {
-        const generationSection = document.querySelector(".generation-section");
-        if (generationSection) {
-          generationSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
+const selectedPrompt = ref(null);
+const editablePrompt = ref("");
+const uploadedImages = ref([]);
+const uploadFileList = ref([]);
+
+const isGenerating = ref(false);
+const generatedImage = ref("");
+const errorMessage = ref("");
+
+const imageHistory = ref([]);
+const previewImage = ref(null);
+
+const hasApiKey = computed(() => !!apiKey.value);
+
+const filteredPrompts = computed(() => {
+  let result = prompts;
+
+  if (activeCategory.value !== "all") {
+    result = result.filter((p) => p.category === activeCategory.value);
+  }
+
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase();
+    result = result.filter(
+      (p) =>
+        p.title.toLowerCase().includes(query) ||
+        p.prompt.toLowerCase().includes(query) ||
+        p.prompt.includes(query) ||
+        p.categoryLabel.includes(query)
+    );
+  }
+
+  return result;
+});
+
+onMounted(() => {
+  const savedKey = localStorage.getItem("nano-banana-api-key");
+  if (savedKey) {
+    apiKey.value = savedKey;
+  }
+  loadImageHistory();
+});
+
+function showToast(message) {
+  ElMessage({
+    message,
+    duration: 2000,
+  });
+}
+
+function saveApiKey() {
+  if (apiKeyInput.value.trim()) {
+    apiKey.value = apiKeyInput.value.trim();
+    localStorage.setItem("nano-banana-api-key", apiKey.value);
+    showToast("API Key 已保存");
+  }
+  showApiKeyModal.value = false;
+}
+
+function openPromptDetail(prompt) {
+  selectedPrompt.value = prompt;
+  showDetailModal.value = true;
+}
+
+function closeDetailModal() {
+  showDetailModal.value = false;
+}
+
+function clearSelectedPrompt() {
+  selectedPrompt.value = null;
+  editablePrompt.value = "";
+  uploadedImages.value = [];
+  uploadFileList.value = [];
+  generatedImage.value = "";
+  errorMessage.value = "";
+}
+
+function copyPrompt() {
+  if (!selectedPrompt.value) return;
+
+  navigator.clipboard
+    .writeText(selectedPrompt.value.prompt)
+    .then(() => showToast("提示词已复制到剪贴板"))
+    .catch(() => showToast("复制失败，请手动复制"));
+}
+
+function startGeneration() {
+  if (!hasApiKey.value) {
+    showToast("请先设置 API Key");
+    showApiKeyModal.value = true;
+    return;
+  }
+
+  editablePrompt.value = selectedPrompt.value?.prompt || "";
+  uploadedImages.value = [];
+  uploadFileList.value = [];
+  generatedImage.value = "";
+  errorMessage.value = "";
+  showDetailModal.value = false;
+
+  nextTick(() => {
+    const generationSection = document.querySelector(".generation-section");
+    if (generationSection) {
+      generationSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
-    },
-    async generateImage() {
-      if (!this.hasApiKey) {
-        this.showToast("请先设置 API Key");
-        return;
+    }
+  });
+}
+
+async function generateImage() {
+  if (!hasApiKey.value) {
+    showToast("请先设置 API Key");
+    return;
+  }
+
+  if (!editablePrompt.value.trim()) {
+    errorMessage.value = "请输入提示词";
+    return;
+  }
+
+  isGenerating.value = true;
+  errorMessage.value = "";
+  generatedImage.value = "";
+
+  try {
+    const requestBody = {
+      model: "nano-banana-pro",
+      prompt: editablePrompt.value,
+    };
+
+    const images = uploadedImages.value.filter(Boolean);
+    if (images.length > 0) {
+      requestBody.image = images;
+    }
+
+    const response = await fetch(
+      "https://api.chatfire.site/v1/images/generations",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey.value}`,
+        },
+        body: JSON.stringify(requestBody),
       }
+    );
 
-      if (!this.editablePrompt.trim()) {
-        this.errorMessage = "请输入提示词";
-        return;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.error?.message || `请求失败: ${response.status}`
+      );
+    }
+
+    const data = await response.json();
+
+    if (data.data && data.data[0]) {
+      generatedImage.value = data.data[0].url || data.data[0].b64_json;
+      if (data.data[0].b64_json) {
+        generatedImage.value = `data:image/png;base64,${data.data[0].b64_json}`;
       }
+      saveToHistory();
+      showToast("图片生成成功！");
+    } else {
+      throw new Error("未能获取生成的图片");
+    }
+  } catch (error) {
+    errorMessage.value = error?.message || "生成失败，请稍后重试";
+  } finally {
+    isGenerating.value = false;
+  }
+}
 
-      this.isGenerating = true;
-      this.errorMessage = "";
-      this.generatedImage = "";
+function loadImageHistory() {
+  try {
+    const history = localStorage.getItem("nano-banana-history");
+    if (history) {
+      imageHistory.value = JSON.parse(history);
+    }
+  } catch (e) {
+    imageHistory.value = [];
+  }
+}
 
-      try {
-        const requestBody = {
-          model: "nano-banana-pro",
-          prompt: this.editablePrompt,
-        };
+function saveToHistory() {
+  if (!generatedImage.value || !selectedPrompt.value) return;
 
-        const images = this.uploadedImages.filter((img) => img);
-        if (images.length > 0) {
-          requestBody.image = images;
-        }
+  const historyItem = {
+    title: selectedPrompt.value.title,
+    prompt: editablePrompt.value,
+    image: generatedImage.value,
+    timestamp: Date.now(),
+  };
 
-        const response = await fetch(
-          "https://api.chatfire.site/v1/images/generations",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.apiKey}`,
-            },
-            body: JSON.stringify(requestBody),
-          }
-        );
+  imageHistory.value.unshift(historyItem);
+  if (imageHistory.value.length > 50) {
+    imageHistory.value = imageHistory.value.slice(0, 50);
+  }
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.error?.message || `请求失败: ${response.status}`
-          );
-        }
-
-        const data = await response.json();
-
-        if (data.data && data.data[0]) {
-          this.generatedImage = data.data[0].url || data.data[0].b64_json;
-          if (data.data[0].b64_json) {
-            this.generatedImage = `data:image/png;base64,${data.data[0].b64_json}`;
-          }
-          this.saveToHistory();
-          this.showToast("图片生成成功！");
-        } else {
-          throw new Error("未能获取生成的图片");
-        }
-      } catch (error) {
-        this.errorMessage = error.message || "生成失败，请稍后重试";
-      } finally {
-        this.isGenerating = false;
-      }
-    },
-    loadImageHistory() {
-      try {
-        const history = localStorage.getItem("nano-banana-history");
-        if (history) {
-          this.imageHistory = JSON.parse(history);
-        }
-      } catch (e) {
-        this.imageHistory = [];
-      }
-    },
-    saveToHistory() {
-      if (!this.generatedImage || !this.selectedPrompt) return;
-
-      const historyItem = {
-        title: this.selectedPrompt.title,
-        prompt: this.editablePrompt,
-        image: this.generatedImage,
-        timestamp: Date.now(),
-      };
-
-      this.imageHistory.unshift(historyItem);
-      if (this.imageHistory.length > 50) {
-        this.imageHistory = this.imageHistory.slice(0, 50);
-      }
-
-      try {
-        localStorage.setItem(
-          "nano-banana-history",
-          JSON.stringify(this.imageHistory)
-        );
-      } catch (e) {
-        if (this.imageHistory.length > 10) {
-          this.imageHistory = this.imageHistory.slice(0, 10);
-          localStorage.setItem(
-            "nano-banana-history",
-            JSON.stringify(this.imageHistory)
-          );
-        }
-      }
-    },
-    deleteHistoryItem(index) {
-      this.imageHistory.splice(index, 1);
+  try {
+    localStorage.setItem(
+      "nano-banana-history",
+      JSON.stringify(imageHistory.value)
+    );
+  } catch (e) {
+    if (imageHistory.value.length > 10) {
+      imageHistory.value = imageHistory.value.slice(0, 10);
       localStorage.setItem(
         "nano-banana-history",
-        JSON.stringify(this.imageHistory)
+        JSON.stringify(imageHistory.value)
       );
-      this.showToast("已删除");
-    },
-    clearHistory() {
-      ElMessageBox.confirm("确定要清空所有历史记录吗？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.imageHistory = [];
-          localStorage.removeItem("nano-banana-history");
-          this.showToast("历史记录已清空");
-        })
-        .catch(() => {});
-    },
-    viewHistoryImage(item) {
-      this.previewImage = item.image;
-    },
-    showToast(message) {
-      ElMessage({
-        message,
-        duration: 2000,
-      });
-    },
-    downloadImage() {
-      if (!this.generatedImage) return;
+    }
+  }
+}
 
-      const link = document.createElement("a");
-      link.href = this.generatedImage;
-      link.download = `nano-banana-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      this.showToast("图片下载中...");
-    },
-  },
-};
+function deleteHistoryItem(index) {
+  imageHistory.value.splice(index, 1);
+  localStorage.setItem(
+    "nano-banana-history",
+    JSON.stringify(imageHistory.value)
+  );
+  showToast("已删除");
+}
+
+function clearHistory() {
+  ElMessageBox.confirm("确定要清空所有历史记录吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      imageHistory.value = [];
+      localStorage.removeItem("nano-banana-history");
+      showToast("历史记录已清空");
+    })
+    .catch(() => {});
+}
+
+function viewHistoryImage(item) {
+  previewImage.value = item.image;
+}
+
+function downloadImage() {
+  if (!generatedImage.value) return;
+
+  const link = document.createElement("a");
+  link.href = generatedImage.value;
+  link.download = `nano-banana-${Date.now()}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast("图片下载中...");
+}
 </script>

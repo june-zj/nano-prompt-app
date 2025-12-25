@@ -35,23 +35,23 @@
   </header>
 </template>
 
-<script>
-export default {
-  name: "AppHeader",
-  props: {
-    searchQuery: {
-      type: String,
-      default: "",
-    },
-    hasApiKey: {
-      type: Boolean,
-      default: false,
-    },
-    showHistory: {
-      type: Boolean,
-      default: false,
-    },
+<script setup>
+defineOptions({ name: "AppHeader" });
+
+defineProps({
+  searchQuery: {
+    type: String,
+    default: "",
   },
-  emits: ["update:searchQuery", "open-history", "open-api-key"],
-};
+  hasApiKey: {
+    type: Boolean,
+    default: false,
+  },
+  showHistory: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+defineEmits(["update:searchQuery", "open-history", "open-api-key"]);
 </script>

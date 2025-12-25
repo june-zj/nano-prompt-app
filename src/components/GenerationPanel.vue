@@ -91,78 +91,81 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: "GenerationPanel",
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    selectedPrompt: {
-      type: Object,
-      default: null,
-    },
-    editablePrompt: {
-      type: String,
-      default: "",
-    },
-    fileList: {
-      type: Array,
-      default: () => [],
-    },
-    isGenerating: {
-      type: Boolean,
-      default: false,
-    },
-    generatedImage: {
-      type: String,
-      default: "",
-    },
-    errorMessage: {
-      type: String,
-      default: "",
-    },
-    hasApiKey: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: [
-    "close",
-    "generate",
-    "download",
-    "preview",
-    "update:editablePrompt",
-    "update:fileList",
-    "images-change",
-  ],
-  methods: {
-    handleUploadChange(file, fileList) {
-      const raw = file?.raw;
-      if (!raw) {
-        this.$emit("update:fileList", fileList);
-        this.$emit("images-change", fileList.map((f) => f.url).filter(Boolean));
-        return;
-      }
+<script setup>
+defineOptions({ name: "GenerationPanel" });
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        file.url = e.target?.result;
-        this.$emit("update:fileList", fileList);
-        this.$emit("images-change", fileList.map((f) => f.url).filter(Boolean));
-      };
-      reader.readAsDataURL(raw);
-    },
-    handleUploadRemove(file, fileList) {
-      this.$emit("update:fileList", fileList);
-      this.$emit("images-change", fileList.map((f) => f.url).filter(Boolean));
-    },
-    handleUploadPreview(file) {
-      if (file?.url) {
-        this.$emit("preview", file.url);
-      }
-    },
+defineProps({
+  show: {
+    type: Boolean,
+    default: false,
   },
-};
+  selectedPrompt: {
+    type: Object,
+    default: null,
+  },
+  editablePrompt: {
+    type: String,
+    default: "",
+  },
+  fileList: {
+    type: Array,
+    default: () => [],
+  },
+  isGenerating: {
+    type: Boolean,
+    default: false,
+  },
+  generatedImage: {
+    type: String,
+    default: "",
+  },
+  errorMessage: {
+    type: String,
+    default: "",
+  },
+  hasApiKey: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits([
+  "close",
+  "generate",
+  "download",
+  "preview",
+  "update:editablePrompt",
+  "update:fileList",
+  "images-change",
+]);
+
+function syncImages(fileList) {
+  emit("update:fileList", fileList);
+  emit("images-change", fileList.map((f) => f.url).filter(Boolean));
+}
+
+function handleUploadChange(file, fileList) {
+  const raw = file?.raw;
+  if (!raw) {
+    syncImages(fileList);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    file.url = e.target?.result;
+    syncImages(fileList);
+  };
+  reader.readAsDataURL(raw);
+}
+
+function handleUploadRemove(file, fileList) {
+  syncImages(fileList);
+}
+
+function handleUploadPreview(file) {
+  if (file?.url) {
+    emit("preview", file.url);
+  }
+}
 </script>

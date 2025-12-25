@@ -30,24 +30,23 @@
         </div>
       </div>
       <div class="footer-copyright">
-        <p>© 2024 Nano Banana Pro. All rights reserved.</p>
+        <p>2024 Nano Banana Pro. All rights reserved.</p>
       </div>
     </div>
   </footer>
 </template>
 
-<script>
-export default {
-  name: "AppFooter",
-  props: {
-    developerGroupQR: {
-      type: String,
-      default: "",
-    },
-    customerServiceQR: {
-      type: String,
-      default: "",
-    },
+<script setup>
+defineOptions({ name: "AppFooter" });
+
+defineProps({
+  developerGroupQR: {
+    type: String,
+    default: "",
   },
-};
+  customerServiceQR: {
+    type: String,
+    default: "",
+  },
+});
 </script>

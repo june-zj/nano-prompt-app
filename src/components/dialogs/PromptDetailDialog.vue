@@ -37,24 +37,21 @@
   </BaseModal>
 </template>
 
-<script>
+<script setup>
 import BaseModal from "../BaseModal.vue";
 
-export default {
-  name: "PromptDetailDialog",
-  components: {
-    BaseModal,
+defineOptions({ name: "PromptDetailDialog" });
+
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    prompt: {
-      type: Object,
-      default: null,
-    },
+  prompt: {
+    type: Object,
+    default: null,
   },
-  emits: ["update:modelValue", "close", "copy", "start-generation"],
-};
+});
+
+defineEmits(["update:modelValue", "close", "copy", "start-generation"]);
 </script>

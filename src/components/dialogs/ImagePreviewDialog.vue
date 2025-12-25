@@ -15,24 +15,21 @@
   </BaseModal>
 </template>
 
-<script>
+<script setup>
 import BaseModal from "../BaseModal.vue";
 
-export default {
-  name: "ImagePreviewDialog",
-  components: {
-    BaseModal,
+defineOptions({ name: "ImagePreviewDialog" });
+
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    image: {
-      type: String,
-      default: "",
-    },
+  image: {
+    type: String,
+    default: "",
   },
-  emits: ["update:modelValue"],
-};
+});
+
+defineEmits(["update:modelValue"]);
 </script>

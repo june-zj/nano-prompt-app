@@ -37,24 +37,21 @@
   </BaseModal>
 </template>
 
-<script>
+<script setup>
 import BaseModal from "../BaseModal.vue";
 
-export default {
-  name: "ApiKeyDialog",
-  components: {
-    BaseModal,
+defineOptions({ name: "ApiKeyDialog" });
+
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    apiKeyInput: {
-      type: String,
-      default: "",
-    },
+  apiKeyInput: {
+    type: String,
+    default: "",
   },
-  emits: ["update:modelValue", "update:apiKeyInput", "save"],
-};
+});
+
+defineEmits(["update:modelValue", "update:apiKeyInput", "save"]);
 </script>

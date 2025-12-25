@@ -62,35 +62,31 @@
   </BaseModal>
 </template>
 
-<script>
+<script setup>
 import BaseModal from "../BaseModal.vue";
 
-export default {
-  name: "HistoryDialog",
-  components: {
-    BaseModal,
+defineOptions({ name: "HistoryDialog" });
+
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    items: {
-      type: Array,
-      default: () => [],
-    },
+  items: {
+    type: Array,
+    default: () => [],
   },
-  emits: ["update:modelValue", "preview", "delete", "clear"],
-  methods: {
-    formatTime(timestamp) {
-      const date = new Date(timestamp);
-      return date.toLocaleString("zh-CN", {
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    },
-  },
-};
+});
+
+defineEmits(["update:modelValue", "preview", "delete", "clear"]);
+
+function formatTime(timestamp) {
+  const date = new Date(timestamp);
+  return date.toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 </script>

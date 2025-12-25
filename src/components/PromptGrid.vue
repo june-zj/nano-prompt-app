@@ -43,15 +43,15 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: "PromptGrid",
-  props: {
-    prompts: {
-      type: Array,
-      default: () => [],
-    },
+<script setup>
+defineOptions({ name: "PromptGrid" });
+
+defineProps({
+  prompts: {
+    type: Array,
+    default: () => [],
   },
-  emits: ["select"],
-};
+});
+
+defineEmits(["select"]);
 </script>
